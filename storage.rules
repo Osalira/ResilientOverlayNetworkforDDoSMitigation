@@ -1,0 +1,32 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'osalirab@gmail.com';
+    }
+
+    // BiWeekly Updates folder
+    match /biweekly_updates/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Presentations folder
+    match /presentations/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Project Report folder
+    match /project_report/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Default rule - deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+} 
