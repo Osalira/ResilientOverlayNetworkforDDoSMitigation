@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAuth } from '@vueuse/firebase'
-import { signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut, signInWithRedirect } from 'firebase/auth'
 import { auth } from '@/firebaseConfig'
 
 const isDark = ref(false)
@@ -60,9 +60,19 @@ const toggleTheme = () => {
 const signIn = async () => {
   try {
     const provider = new GoogleAuthProvider()
+    // Configure provider to always show account selection
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    })
+    
     await signInWithPopup(auth, provider)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Authentication error:', error)
+    if (error.code === 'auth/popup-blocked') {
+      alert('Please allow popups for this site to sign in.\n\nTo allow popups:\n1. Look for the popup blocked icon in your address bar\n2. Click it and select "Always allow popups from this site"\n3. Try signing in again')
+    } else {
+      alert('Sign in failed: ' + (error.message || 'Unknown error'))
+    }
   }
 }
 
