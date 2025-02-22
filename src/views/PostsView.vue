@@ -102,7 +102,7 @@
 
     <template v-else>
       <v-card v-for="post in postStore.posts" :key="post.id" class="mb-6">
-        <v-card-title>{{ post.title }}</v-card-title>
+        <v-card-title class="text-h5">{{ post.title }}</v-card-title>
         <v-card-subtitle>{{ formatDate(post.date) }}</v-card-subtitle>
         
         <v-card-text>
@@ -112,17 +112,25 @@
           </div>
 
           <!-- PDF Post -->
-          <div v-else-if="post.type === 'pdf'" class="pdf-viewer">
-            <vue-pdf-embed v-if="post.pdfUrl" :source="post.pdfUrl" />
-            <v-btn
+          <div v-else-if="post.type === 'pdf'" class="pdf-section">
+            <pdf-viewer
               v-if="post.pdfUrl"
-              :href="post.pdfUrl"
-              target="_blank"
-              color="primary"
-              class="mt-2"
-            >
-              Download PDF
-            </v-btn>
+              :source="post.pdfUrl"
+              :show-controls="true"
+              :full-width="true"
+              class="mb-4"
+            />
+            <div class="pdf-actions">
+              <v-btn
+                v-if="post.pdfUrl"
+                :href="post.pdfUrl"
+                target="_blank"
+                color="primary"
+                prepend-icon="mdi-download"
+              >
+                Download PDF
+              </v-btn>
+            </div>
           </div>
 
           <!-- Video Post -->
@@ -144,7 +152,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { usePostStore } from '@/stores/posts'
-import VuePdfEmbed from 'vue-pdf-embed'
+import PdfViewer from '@/components/PdfViewer.vue'
 
 const postStore = usePostStore()
 const activeTab = ref('text')
@@ -229,8 +237,15 @@ postStore.fetchPosts()
 
 <style scoped>
 .posts {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 2rem;
+}
+
+@media (min-width: 1264px) {
+  .posts {
+    max-width: 1200px;
+  }
 }
 
 .video-container {
@@ -238,6 +253,7 @@ postStore.fetchPosts()
   padding-bottom: 56.25%; /* 16:9 aspect ratio */
   height: 0;
   overflow: hidden;
+  margin-bottom: 1rem;
 }
 
 .video-container iframe {
@@ -248,9 +264,19 @@ postStore.fetchPosts()
   height: 100%;
 }
 
-.pdf-viewer {
-  width: 100%;
-  height: 800px;
-  overflow-y: auto;
+.pdf-section {
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pdf-actions {
+  padding: 1rem;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+:deep(.v-card-text) {
+  padding: 0;
 }
 </style> 

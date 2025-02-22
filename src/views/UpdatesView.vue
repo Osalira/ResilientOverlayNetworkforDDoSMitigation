@@ -58,27 +58,31 @@
 
     <template v-else>
       <v-card v-for="update in updates" :key="update.id" class="mb-6">
-        <v-card-title>{{ update.title }}</v-card-title>
-        <v-card-subtitle>{{ update.period }}</v-card-subtitle>
+        <v-card-title class="text-h5">{{ update.title }}</v-card-title>
+        <v-card-subtitle class="text-subtitle-1">{{ update.period }}</v-card-subtitle>
         
         <v-card-text>
-          <div class="pdf-viewer mb-4">
-            <vue-pdf-embed
+          <div class="pdf-section">
+            <pdf-viewer
               v-if="update.pdfUrl"
               :source="update.pdfUrl"
-              :page="1"
+              :show-controls="true"
+              :full-width="true"
+              class="mb-4"
             />
+            
+            <div class="pdf-actions">
+              <v-btn
+                v-if="update.pdfUrl"
+                :href="update.pdfUrl"
+                target="_blank"
+                color="primary"
+                prepend-icon="mdi-download"
+              >
+                Download PDF
+              </v-btn>
+            </div>
           </div>
-          
-          <v-btn
-            v-if="update.pdfUrl"
-            :href="update.pdfUrl"
-            target="_blank"
-            color="primary"
-            prepend-icon="mdi-download"
-          >
-            Download PDF
-          </v-btn>
         </v-card-text>
 
         <v-card-actions v-if="postStore.isAdmin">
@@ -100,7 +104,7 @@
 
 import { ref, onMounted } from 'vue'
 import { usePostStore } from '@/stores/posts'
-import VuePdfEmbed from 'vue-pdf-embed'
+import PdfViewer from '@/components/PdfViewer.vue'
 import {
   collection,
   query,
@@ -221,16 +225,30 @@ onMounted(() => {
 
 <style scoped>
 .updates {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding-bottom: 2rem;
+  padding: 2rem;
 }
 
-.pdf-viewer {
-  width: 100%;
-  height: 800px;
-  overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+@media (min-width: 1264px) {
+  .updates {
+    max-width: 1200px;
+  }
+}
+
+.pdf-section {
+  background: #f5f5f5;
   border-radius: 4px;
+  overflow: hidden;
+}
+
+.pdf-actions {
+  padding: 1rem;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+:deep(.v-card-text) {
+  padding: 0;
 }
 </style> 

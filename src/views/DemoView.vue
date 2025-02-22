@@ -61,7 +61,7 @@
 
     <template v-else>
       <v-card v-for="item in presentations" :key="item.id" class="mb-6">
-        <v-card-title>{{ item.title }}</v-card-title>
+        <v-card-title class="text-h5">{{ item.title }}</v-card-title>
         <v-card-subtitle>{{ formatDate(item.date) }}</v-card-subtitle>
 
         <v-card-text>
@@ -81,13 +81,13 @@
           </p>
 
           <!-- PDF Slides -->
-          <div v-if="item.slidesUrl" class="mb-4">
-            <div class="pdf-viewer mb-4">
-              <vue-pdf-embed
-                :source="item.slidesUrl"
-                :page="1"
-              />
-            </div>
+          <div v-if="item.slidesUrl">
+            <pdf-viewer
+              :source="item.slidesUrl"
+              :show-controls="true"
+              :full-width="true"
+              class="mb-4"
+            />
             
             <v-btn
               :href="item.slidesUrl"
@@ -118,7 +118,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { usePostStore } from '@/stores/posts'
-import VuePdfEmbed from 'vue-pdf-embed'
+import PdfViewer from '@/components/PdfViewer.vue'
 import {
   collection,
   query,
@@ -254,9 +254,15 @@ onMounted(() => {
 
 <style scoped>
 .demo {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding-bottom: 2rem;
+  padding: 2rem;
+}
+
+@media (min-width: 1264px) {
+  .demo {
+    max-width: 1200px;
+  }
 }
 
 .video-container {
@@ -272,13 +278,5 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-.pdf-viewer {
-  width: 100%;
-  height: 800px;
-  overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
 }
 </style> 

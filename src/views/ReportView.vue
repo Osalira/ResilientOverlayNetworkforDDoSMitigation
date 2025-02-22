@@ -58,7 +58,7 @@
 
     <template v-else-if="currentReport">
       <v-card class="mb-6">
-        <v-card-title>{{ currentReport.title }}</v-card-title>
+        <v-card-title class="text-h5">{{ currentReport.title }}</v-card-title>
         <v-card-subtitle>{{ formatDate(currentReport.date) }}</v-card-subtitle>
 
         <v-card-text>
@@ -66,12 +66,13 @@
             {{ currentReport.abstract }}
           </p>
 
-          <div class="pdf-viewer mb-4">
-            <vue-pdf-embed
-              v-if="currentReport.pdfUrl"
-              :source="currentReport.pdfUrl"
-            />
-          </div>
+          <pdf-viewer
+            v-if="currentReport.pdfUrl"
+            :source="currentReport.pdfUrl"
+            :show-controls="true"
+            :full-width="true"
+            class="mb-4"
+          />
 
           <v-btn
             v-if="currentReport.pdfUrl"
@@ -108,7 +109,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { usePostStore } from '@/stores/posts'
-import VuePdfEmbed from 'vue-pdf-embed'
+import PdfViewer from '@/components/PdfViewer.vue'
 import {
   collection,
   query,
@@ -236,16 +237,14 @@ onMounted(() => {
 
 <style scoped>
 .report {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding-bottom: 2rem;
+  padding: 2rem;
 }
 
-.pdf-viewer {
-  width: 100%;
-  height: 800px;
-  overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
+@media (min-width: 1264px) {
+  .report {
+    max-width: 1200px;
+  }
 }
 </style> 
