@@ -120,6 +120,7 @@
               :full-width="true"
               class="mb-4"
             />
+            
             <div class="pdf-actions">
               <v-btn
                 v-if="post.pdfUrl"
@@ -127,8 +128,18 @@
                 target="_blank"
                 color="primary"
                 prepend-icon="mdi-download"
+                class="mr-2"
               >
                 Download PDF
+              </v-btn>
+              <v-btn
+                v-if="post.pdfUrl"
+                :href="post.pdfUrl"
+                target="_blank"
+                variant="text"
+                prepend-icon="mdi-open-in-new"
+              >
+                Open in new tab
               </v-btn>
             </div>
           </div>

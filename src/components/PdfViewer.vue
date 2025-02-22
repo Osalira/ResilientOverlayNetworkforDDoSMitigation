@@ -1,11 +1,11 @@
 <template>
   <div class="pdf-viewer" :class="{ 'full-width': fullWidth }">
-    <div v-if="loading" class="loading-overlay">
+    <div v-if="loading && !error" class="loading-overlay">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
       <span class="ml-2">Loading PDF...</span>
     </div>
     
-    <div class="pdf-controls mb-2" v-if="showControls && !loading">
+    <div v-if="!error" class="pdf-controls mb-2" v-show="showControls && !loading">
       <v-btn-group>
         <v-btn
           icon="mdi-minus"
@@ -42,7 +42,7 @@
       </v-btn-group>
     </div>
 
-    <div class="pdf-container" ref="container">
+    <div v-if="!error" class="pdf-container" ref="container">
       <vue-pdf-embed
         :source="source"
         :page="currentPage"
@@ -54,18 +54,29 @@
       />
     </div>
 
-    <div v-if="error" class="error-message">
-      <v-alert type="error" title="Error loading PDF">
-        {{ error }}
-        <template v-slot:append>
+    <div v-if="error" class="error-container">
+      <v-alert type="warning" class="mb-4">
+        <template v-slot:title>
+          Unable to display PDF directly
+        </template>
+        <p class="mb-4">Due to security settings, we cannot display the PDF directly in the browser. You can:</p>
+        <div class="d-flex flex-column gap-2">
           <v-btn
-            color="error"
+            color="primary"
+            :href="source"
+            target="_blank"
+            prepend-icon="mdi-download"
+          >
+            Download PDF
+          </v-btn>
+          <v-btn
             variant="text"
             @click="retryLoading"
+            prepend-icon="mdi-refresh"
           >
-            Retry
+            Try viewing again
           </v-btn>
-        </template>
+        </div>
       </v-alert>
     </div>
   </div>
@@ -211,18 +222,20 @@ onMounted(() => {
   overflow-y: auto;
 }
 
-.error-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  width: 90%;
-  max-width: 400px;
+.error-container {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 :deep(.vue-pdf-embed) {
   transition: transform 0.2s ease, opacity 0.3s ease;
   transform-origin: top center;
+}
+
+:deep(.v-alert) {
+  max-width: 400px;
 }
 </style> 

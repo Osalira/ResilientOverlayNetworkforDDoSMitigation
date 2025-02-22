@@ -78,8 +78,18 @@
                 target="_blank"
                 color="primary"
                 prepend-icon="mdi-download"
+                class="mr-2"
               >
                 Download PDF
+              </v-btn>
+              <v-btn
+                v-if="update.pdfUrl"
+                :href="update.pdfUrl"
+                target="_blank"
+                variant="text"
+                prepend-icon="mdi-open-in-new"
+              >
+                Open in new tab
               </v-btn>
             </div>
           </div>
