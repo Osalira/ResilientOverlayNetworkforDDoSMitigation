@@ -238,11 +238,15 @@ onMounted(() => {
   max-width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 1264px) {
   .updates {
-    max-width: 1200px;
+    min-width: 80vw;
+    max-width: 90vw;
   }
 }
 
@@ -250,6 +254,10 @@ onMounted(() => {
   background: #f5f5f5;
   border-radius: 4px;
   overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin: -16px;
 }
 
 .pdf-actions {
@@ -258,7 +266,47 @@ onMounted(() => {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+:deep(.v-card) {
+  width: 100%;
+  flex-grow: 1;
+}
+
 :deep(.v-card-text) {
-  padding: 0;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.pdf-viewer) {
+  flex-grow: 1;
+  height: auto !important;
+  min-height: 90vh !important;
+}
+
+:deep(.pdf-object) {
+  width: 100%;
+  height: 90vh !important;
+  min-height: 90vh !important;
+}
+
+.v-card.mb-6 {
+  margin-bottom: 1rem !important;
+}
+
+.v-card.mb-6:first-child {
+  margin-bottom: 1rem !important;
+}
+
+.v-card:not(:first-child) {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.vue-pdf-embed) {
+  max-width: 100%;
+  height: auto !important;
+  min-height: 90vh !important;
 }
 </style> 

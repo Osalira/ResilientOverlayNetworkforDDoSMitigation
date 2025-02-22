@@ -99,6 +99,7 @@ interface Post {
   content?: string
   pdfUrl?: string
   videoUrl?: string
+  collection: string
   link: string
 }
 
@@ -124,22 +125,22 @@ const formatDate = (date: Date) => {
   })
 }
 
-const getPostLink = (post: Post) => {
-  switch (post.type) {
-    case 'pdf':
-    case 'text':
-      return '/posts'
-    case 'video':
-      return '/demo'
-    default:
-      return '/'
-  }
-}
-
 const getPostType = (data: any): Post['type'] => {
   if (data.pdfUrl) return 'pdf'
   if (data.videoUrl) return 'video'
   return 'text'
+}
+
+// Map collection names to routes
+const collectionRoutes: { [key: string]: string } = {
+  'posts': '/posts',
+  'biweekly_updates': '/updates',
+  'presentations': '/demo',
+  'project_report': '/report'
+}
+
+const getPostLink = (post: Post) => {
+  return collectionRoutes[post.collection] || '/'
 }
 
 const fetchLatestPosts = async () => {
@@ -164,7 +165,8 @@ const fetchLatestPosts = async () => {
           content: data.content || data.abstract || data.description,
           pdfUrl: data.pdfUrl,
           videoUrl: data.videoUrl,
-          link: getPostLink({ type } as Post)
+          collection: collectionName,
+          link: collectionRoutes[collectionName] || '/'
         }
       })
       

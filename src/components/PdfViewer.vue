@@ -7,11 +7,50 @@
     
     <!-- Native PDF Viewer -->
     <div v-if="!error" class="pdf-container" ref="container">
+      <!-- Controls for both viewers -->
+      <div class="pdf-controls mb-2" v-show="showControls && !loading">
+        <v-btn-group>
+          <v-btn
+            icon="mdi-minus"
+            @click="zoomOut"
+            :disabled="scale <= minScale"
+          ></v-btn>
+          <v-btn
+            icon="mdi-plus"
+            @click="zoomIn"
+            :disabled="scale >= maxScale"
+          ></v-btn>
+          <v-btn
+            icon="mdi-refresh"
+            @click="resetZoom"
+          ></v-btn>
+        </v-btn-group>
+        
+        <v-btn-group class="ml-2" v-if="!useNativeViewer">
+          <v-btn
+            icon="mdi-chevron-left"
+            @click="prevPage"
+            :disabled="currentPage <= 1"
+          ></v-btn>
+          <v-btn-group>
+            <span class="px-4 d-flex align-center">
+              {{ currentPage }} / {{ totalPages }}
+            </span>
+          </v-btn-group>
+          <v-btn
+            icon="mdi-chevron-right"
+            @click="nextPage"
+            :disabled="currentPage >= totalPages"
+          ></v-btn>
+        </v-btn-group>
+      </div>
+
       <object
         v-if="useNativeViewer"
         :data="source"
         type="application/pdf"
         class="pdf-object"
+        :style="{ transform: `scale(${scale})` }"
         @load="onNativeLoad"
         @error="fallbackToPdfJs"
       >
@@ -39,44 +78,6 @@
         @loaded="onLoaded"
         @error="onError"
       />
-    </div>
-
-    <!-- Controls for PDF.js view -->
-    <div v-if="!error && !useNativeViewer" class="pdf-controls mb-2" v-show="showControls && !loading">
-      <v-btn-group>
-        <v-btn
-          icon="mdi-minus"
-          @click="zoomOut"
-          :disabled="scale <= minScale"
-        ></v-btn>
-        <v-btn
-          icon="mdi-plus"
-          @click="zoomIn"
-          :disabled="scale >= maxScale"
-        ></v-btn>
-        <v-btn
-          icon="mdi-refresh"
-          @click="resetZoom"
-        ></v-btn>
-      </v-btn-group>
-      
-      <v-btn-group class="ml-2">
-        <v-btn
-          icon="mdi-chevron-left"
-          @click="prevPage"
-          :disabled="currentPage <= 1"
-        ></v-btn>
-        <v-btn-group>
-          <span class="px-4 d-flex align-center">
-            {{ currentPage }} / {{ totalPages }}
-          </span>
-        </v-btn-group>
-        <v-btn
-          icon="mdi-chevron-right"
-          @click="nextPage"
-          :disabled="currentPage >= totalPages"
-        ></v-btn>
-      </v-btn-group>
     </div>
 
     <div v-if="error" class="error-container">
@@ -221,13 +222,15 @@ onMounted(() => {
 }
 
 .pdf-viewer.full-width {
-  min-height: 800px;
+  min-height: 1000px; /* Increased from 800px */
 }
 
 .pdf-object {
   width: 100%;
-  height: 800px;
+  height: 1000px; /* Increased from 800px */
   border: none;
+  transform-origin: top center;
+  transition: transform 0.2s ease;
 }
 
 .pdf-fallback {
@@ -263,9 +266,9 @@ onMounted(() => {
 .pdf-container {
   padding: 16px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 800px;
+  flex-direction: column;
+  align-items: center;
+  min-height: 1000px; /* Increased from 800px */
   overflow-y: auto;
 }
 

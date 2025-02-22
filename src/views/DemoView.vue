@@ -257,6 +257,9 @@ onMounted(() => {
   max-width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 1264px) {
@@ -270,6 +273,7 @@ onMounted(() => {
   padding-bottom: 56.25%; /* 16:9 aspect ratio */
   height: 0;
   overflow: hidden;
+  margin-bottom: 1rem;
 }
 
 .video-container iframe {
@@ -278,5 +282,18 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+:deep(.v-card-text) {
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.pdf-viewer) {
+  flex-grow: 1;
+  height: auto !important;
+  min-height: 90vh !important;
 }
 </style> 
