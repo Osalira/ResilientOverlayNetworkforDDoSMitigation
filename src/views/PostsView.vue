@@ -161,9 +161,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePostStore } from '@/stores/posts'
 import PdfViewer from '@/components/PdfViewer.vue'
+import { collection, query, orderBy, getDocs } from 'firebase/firestore'
+import { db } from '@/firebaseConfig'
 
 const postStore = usePostStore()
 const activeTab = ref('text')
@@ -197,6 +199,48 @@ const getEmbedUrl = (url: string) => {
   return videoId ? 'https://www.youtube.com/embed/' + videoId : ''
 }
 
+const fetchAllPosts = async () => {
+  postStore.isLoading = true
+  try {
+    const collections = ['posts', 'biweekly_updates', 'presentations', 'project_report']
+    let allPosts = []
+
+    for (const collectionName of collections) {
+      const postsRef = collection(db, collectionName)
+      const q = query(postsRef, orderBy('date', 'desc'))
+      const snapshot = await getDocs(q)
+      
+      const posts = snapshot.docs.map(doc => {
+        const data = doc.data()
+        const type: 'pdf' | 'video' | 'text' = data.pdfUrl ? 'pdf' : data.videoUrl ? 'video' : 'text'
+        return {
+          id: doc.id,
+          title: data.title,
+          content: data.content || data.abstract || data.description,
+          pdfUrl: data.pdfUrl,
+          videoUrl: data.videoUrl,
+          date: data.date.toDate(),
+          type,
+          collection: collectionName
+        }
+      })
+      
+      allPosts.push(...posts)
+    }
+
+    // Sort all posts by date
+    postStore.posts = allPosts.sort((a, b) => b.date.getTime() - a.date.getTime())
+  } catch (error) {
+    console.error('Error fetching all posts:', error)
+  } finally {
+    postStore.isLoading = false
+  }
+}
+
+onMounted(() => {
+  fetchAllPosts()
+})
+
 const submitTextPost = async () => {
   if (!textPost.value.title || !textPost.value.content) return
   
@@ -205,6 +249,7 @@ const submitTextPost = async () => {
     await postStore.addTextPost(textPost.value.title, textPost.value.content)
     textPost.value = { title: '', content: '' }
     activeTab.value = 'text'
+    await fetchAllPosts()
   } catch (error) {
     console.error('Error submitting text post:', error)
   } finally {
@@ -220,6 +265,7 @@ const submitPdfPost = async () => {
     await postStore.addPdfPost(pdfPost.value.title, pdfPost.value.file)
     pdfPost.value = { title: '', file: null }
     activeTab.value = 'pdf'
+    await fetchAllPosts()
   } catch (error) {
     console.error('Error submitting PDF post:', error)
   } finally {
@@ -235,15 +281,13 @@ const submitVideoPost = async () => {
     await postStore.addVideoPost(videoPost.value.title, videoPost.value.url)
     videoPost.value = { title: '', url: '' }
     activeTab.value = 'video'
+    await fetchAllPosts()
   } catch (error) {
     console.error('Error submitting video post:', error)
   } finally {
     isSubmitting.value = false
   }
 }
-
-// Fetch posts when component is mounted
-postStore.fetchPosts()
 </script>
 
 <style scoped>
@@ -252,13 +296,15 @@ postStore.fetchPosts()
   margin: 0 auto;
   padding: 2rem;
   min-height: 90vh;
+  min-width: 80vw;
   display: flex;
   flex-direction: column;
 }
 
 @media (min-width: 1264px) {
   .posts {
-    max-width: 1200px;
+    min-width: 80vw;
+    max-width: 90vw;
   }
 }
 

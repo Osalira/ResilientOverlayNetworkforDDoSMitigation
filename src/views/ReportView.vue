@@ -241,13 +241,15 @@ onMounted(() => {
   margin: 0 auto;
   padding: 2rem;
   min-height: 90vh;
+  min-width: 80vw;
   display: flex;
   flex-direction: column;
 }
 
 @media (min-width: 1264px) {
   .report {
-    max-width: 1200px;
+    min-width: 80vw;
+    max-width: 90vw;
   }
 }
 

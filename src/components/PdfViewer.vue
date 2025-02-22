@@ -73,7 +73,7 @@
         :source="source"
         :page="currentPage"
         :style="{ transform: `scale(${scale})`, opacity: loading ? 0 : 1 }"
-        @rendered="onPdfRendered"
+       
         @loading="onLoading"
         @loaded="onLoaded"
         @error="onError"
@@ -111,6 +111,10 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import VuePdfEmbed from 'vue-pdf-embed'
+
+type RenderedEvent = {
+  (pageNumber: number, totalPagesCount: number): void;
+}
 
 const props = defineProps<{
   source: string
@@ -156,13 +160,6 @@ const prevPage = () => {
   }
 }
 
-const onPdfRendered = (pageNumber: number, totalPagesCount: number) => {
-  if (pageNumber === 1) {
-    totalPages.value = totalPagesCount
-  }
-  loading.value = false
-  error.value = null
-}
 
 const onLoading = () => {
   loading.value = true
