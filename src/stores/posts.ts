@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { collection, addDoc, getDocs, query, orderBy, where, Timestamp } from 'firebase/firestore'
+import { collection, addDoc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage, auth } from '@/firebaseConfig'
 

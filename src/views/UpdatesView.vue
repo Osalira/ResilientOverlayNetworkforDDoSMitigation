@@ -259,12 +259,14 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   margin: -16px;
+  margin-bottom: 0;
 }
 
 .pdf-actions {
   padding: 1rem;
   background: white;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
+  margin: 0 -16px -16px -16px;
 }
 
 :deep(.v-card) {
@@ -283,12 +285,14 @@ onMounted(() => {
   flex-grow: 1;
   height: auto !important;
   min-height: 90vh !important;
+  margin-bottom: 0;
 }
 
-:deep(.pdf-object) {
-  width: 100%;
-  height: 90vh !important;
+:deep(.vue-pdf-embed) {
+  max-width: 100%;
+  height: auto !important;
   min-height: 90vh !important;
+  margin-bottom: 0;
 }
 
 .v-card.mb-6 {
@@ -303,11 +307,5 @@ onMounted(() => {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-}
-
-:deep(.vue-pdf-embed) {
-  max-width: 100%;
-  height: auto !important;
-  min-height: 90vh !important;
 }
 </style> 

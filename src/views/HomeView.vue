@@ -89,7 +89,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { collection, addDoc, query, orderBy, limit, getDocs, Timestamp } from 'firebase/firestore'
 import { db } from '@/firebaseConfig'
-import PdfViewer from '@/components/PdfViewer.vue'
+
 
 interface Post {
   id: string
@@ -139,9 +139,9 @@ const collectionRoutes: { [key: string]: string } = {
   'project_report': '/report'
 }
 
-const getPostLink = (post: Post) => {
-  return collectionRoutes[post.collection] || '/'
-}
+// const getPostLink = (post: Post) => {
+//   return collectionRoutes[post.collection] || '/'
+// }
 
 const fetchLatestPosts = async () => {
   try {

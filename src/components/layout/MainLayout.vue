@@ -46,11 +46,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAuth } from '@vueuse/firebase'
-import { signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut, signInWithRedirect } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut } from 'firebase/auth'
 import { auth } from '@/firebaseConfig'
 
 const isDark = ref(false)
-const { isAuthenticated, user } = useAuth(auth)
+const { isAuthenticated } = useAuth(auth)
 
 const toggleTheme = () => {
   isDark.value = !isDark.value

@@ -112,9 +112,6 @@
 import { ref, onMounted, watch } from 'vue'
 import VuePdfEmbed from 'vue-pdf-embed'
 
-type RenderedEvent = {
-  (pageNumber: number, totalPagesCount: number): void;
-}
 
 const props = defineProps<{
   source: string

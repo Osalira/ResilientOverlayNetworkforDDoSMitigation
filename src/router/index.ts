@@ -44,7 +44,7 @@ const router = createRouter({
 })
 
 // Navigation guard for admin-only routes
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
   
   if (requiresAdmin) {
