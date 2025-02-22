@@ -5,7 +5,44 @@
       <span class="ml-2">Loading PDF...</span>
     </div>
     
-    <div v-if="!error" class="pdf-controls mb-2" v-show="showControls && !loading">
+    <!-- Native PDF Viewer -->
+    <div v-if="!error" class="pdf-container" ref="container">
+      <object
+        v-if="useNativeViewer"
+        :data="source"
+        type="application/pdf"
+        class="pdf-object"
+        @load="onNativeLoad"
+        @error="fallbackToPdfJs"
+      >
+        <div class="pdf-fallback">
+          <p>It appears you don't have a PDF plugin for this browser.</p>
+          <v-btn
+            color="primary"
+            :href="source"
+            target="_blank"
+            prepend-icon="mdi-download"
+          >
+            Download PDF
+          </v-btn>
+        </div>
+      </object>
+
+      <!-- PDF.js Fallback -->
+      <vue-pdf-embed
+        v-else-if="!useNativeViewer && !error"
+        :source="source"
+        :page="currentPage"
+        :style="{ transform: `scale(${scale})`, opacity: loading ? 0 : 1 }"
+        @rendered="onPdfRendered"
+        @loading="onLoading"
+        @loaded="onLoaded"
+        @error="onError"
+      />
+    </div>
+
+    <!-- Controls for PDF.js view -->
+    <div v-if="!error && !useNativeViewer" class="pdf-controls mb-2" v-show="showControls && !loading">
       <v-btn-group>
         <v-btn
           icon="mdi-minus"
@@ -42,24 +79,12 @@
       </v-btn-group>
     </div>
 
-    <div v-if="!error" class="pdf-container" ref="container">
-      <vue-pdf-embed
-        :source="source"
-        :page="currentPage"
-        :style="{ transform: `scale(${scale})`, opacity: loading ? 0 : 1 }"
-        @rendered="onPdfRendered"
-        @loading="onLoading"
-        @loaded="onLoaded"
-        @error="onError"
-      />
-    </div>
-
     <div v-if="error" class="error-container">
       <v-alert type="warning" class="mb-4">
         <template v-slot:title>
-          Unable to display PDF directly
+          Unable to display PDF
         </template>
-        <p class="mb-4">Due to security settings, we cannot display the PDF directly in the browser. You can:</p>
+        <p class="mb-4">We couldn't display the PDF in your browser. You can:</p>
         <div class="d-flex flex-column gap-2">
           <v-btn
             color="primary"
@@ -100,6 +125,7 @@ const scale = ref(1)
 const minScale = 0.5
 const maxScale = 2
 const container = ref<HTMLElement | null>(null)
+const useNativeViewer = ref(true)
 
 const zoomIn = () => {
   if (scale.value < maxScale) {
@@ -160,6 +186,16 @@ const retryLoading = () => {
   scale.value = 1
 }
 
+const onNativeLoad = () => {
+  loading.value = false
+  error.value = null
+}
+
+const fallbackToPdfJs = () => {
+  useNativeViewer.value = false
+  loading.value = true
+}
+
 // Reset page when source changes
 watch(() => props.source, () => {
   currentPage.value = 1
@@ -186,6 +222,17 @@ onMounted(() => {
 
 .pdf-viewer.full-width {
   min-height: 800px;
+}
+
+.pdf-object {
+  width: 100%;
+  height: 800px;
+  border: none;
+}
+
+.pdf-fallback {
+  padding: 2rem;
+  text-align: center;
 }
 
 .loading-overlay {
