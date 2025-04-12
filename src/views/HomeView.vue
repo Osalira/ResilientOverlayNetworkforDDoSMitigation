@@ -2,7 +2,7 @@
   <div class="home">
     <v-card class="mb-6">
       <v-card-title class="text-h4">
-        Welcome to Resilient Overlay Network for DDoS Mitigation
+        Resilient Overlay Network for DDoS Mitigation
       </v-card-title>
       <v-card-text>
         <p class="text-body-1">
